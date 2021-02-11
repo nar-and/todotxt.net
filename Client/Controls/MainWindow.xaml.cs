@@ -458,6 +458,11 @@ namespace Client
             ViewModel.SortList(SortType.Project);
         }
 
+        private void SortByPeopleExecuted(object sender, RoutedEventArgs e)
+        {
+            ViewModel.SortList(SortType.People);
+        }
+
         private void SortByAlphabeticalExecuted(object sender, RoutedEventArgs e)
         {
             ViewModel.SortList(SortType.Alphabetical);

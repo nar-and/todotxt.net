@@ -372,6 +372,9 @@ namespace Client
                     case SortType.Project:
                         sortProperty = "Projects";
                         break;
+                    case SortType.People:
+                        sortProperty = "People";
+                        break;
                     case SortType.Context:
                         sortProperty = "Contexts";
                         break;

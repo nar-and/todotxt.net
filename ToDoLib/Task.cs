@@ -29,11 +29,15 @@ namespace ToDoLib
         private const string ThresholdDatePattern = @"t:(?<date>(\d{4})-(\d{2})-(\d{2}))";
         private const string ProjectPattern = @"(?<proj>(?<=^|\s)\+[^\s]+)";
         private const string ContextPattern = @"(^|\s)(?<context>\@[^\s]+)";
+        private const string PeoplePattern = @"people:(?<people>([a-zA-Z]+))";
 
         public List<string> Projects { get; set; }
         public string PrimaryProject { get; private set; }
         public List<string> Contexts { get; set; }
         public string PrimaryContext { get; private set; }
+
+        public List<string> People { get; set; }
+        public string PrimaryPerson { get; private set; }
         public string DueDate { get; set; }
         public string CompletedDate { get; set; }
         public string CreationDate { get; set; }
@@ -178,6 +182,24 @@ namespace ToDoLib
             Contexts = ContextsSet.ToList<string>();
             raw = reg.Replace(raw, "");
 
+            var PeopleSet = new SortedSet<string>();
+            reg = new Regex(PeoplePattern);
+            var people = reg.Matches(raw);
+            PrimaryPerson = null;
+            i = 0;
+            foreach (Match person in people)
+            {
+                var p = person.Groups["people"].Value.Trim();
+                PeopleSet.Add(p);
+                if (i == 0)
+                {
+                    PrimaryPerson = p;
+                }
+                i++;
+            }
+            People = PeopleSet.ToList<string>();
+            raw = reg.Replace(raw, "");
+
             Body = raw.Trim();
         }
 
@@ -239,6 +261,7 @@ namespace ToDoLib
             Priority = priority;
             Projects = projects;
             Contexts = contexts;
+            People = null;
             DueDate = dueDate;
             Body = body;
             Completed = completed;
