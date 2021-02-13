@@ -35,7 +35,6 @@ namespace ToDoLib
         public string PrimaryProject { get; private set; }
         public List<string> Contexts { get; set; }
         public string PrimaryContext { get; private set; }
-
         public List<string> People { get; set; }
         public string PrimaryPerson { get; private set; }
         public string DueDate { get; set; }
@@ -106,8 +105,10 @@ namespace ToDoLib
             // - completed
             // - priority
             // - due date
+            // - threshold date
             // - created date
             // - projects | contexts
+            // - people
             // What we have left is the body
 
             var reg = new Regex(CompletedPattern, RegexOptions.IgnoreCase);
@@ -256,12 +257,18 @@ namespace ToDoLib
         }
 
         public Task(string priority, List<string> projects, List<string> contexts, string body, string dueDate = "",
-                    bool completed = false, string thresholdDate = "")
+                    bool completed = false, string thresholdDate = "", List<string> people = null)
         {
             Priority = priority;
             Projects = projects;
             Contexts = contexts;
-            People = null;
+            
+            if (people == null)
+            {
+                people = new List<string>() { };
+            }
+            People = people;
+
             DueDate = dueDate;
             Body = body;
             Completed = completed;
