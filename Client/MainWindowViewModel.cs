@@ -864,7 +864,24 @@ namespace Client
                         .ThenBy(t => (string.IsNullOrEmpty(t.Priority) ? "(zzz)" : t.Priority))
                         .ThenBy(t => (string.IsNullOrEmpty(t.DueDate) ? "9999-99-99" : t.DueDate))
                         .ThenBy(t => (string.IsNullOrEmpty(t.CreationDate) ? "0000-00-00" : t.CreationDate));
-				
+
+                case SortType.People:
+                    _window.SetSelectedMenuItem(_window.sortMenu, "People");
+                    return tasks
+                        .OrderBy(t =>
+                        {
+                            var s = "";
+                            if (t.People != null && t.People.Count > 0)
+                                s += t.PrimaryPerson;
+                            else
+                                s += "zzz";
+                            return s;
+                        })
+                        .ThenBy(t => t.Completed)
+                        .ThenBy(t => (string.IsNullOrEmpty(t.Priority) ? "(zzz)" : t.Priority))
+                        .ThenBy(t => (string.IsNullOrEmpty(t.DueDate) ? "9999-99-99" : t.DueDate))
+                        .ThenBy(t => (string.IsNullOrEmpty(t.CreationDate) ? "0000-00-00" : t.CreationDate));
+
                 case SortType.Created:
                     _window.SetSelectedMenuItem(_window.sortMenu, "CreatedDate");
                     return tasks.OrderBy(t => (string.IsNullOrEmpty(t.CreationDate) ? "0000-00-00" : t.CreationDate))
