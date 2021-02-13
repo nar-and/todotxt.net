@@ -11,8 +11,19 @@ namespace ToDoTests
     {
         List<string> _projects = new List<string>() { "+test" };
         List<string> _contexts = new List<string>() { "@work" };
+        List<string> _people = new List<string>() { "me" };
 
         #region Create
+
+        [Test]
+        public void Create_Simple()
+        {
+            var task = new Task("This is a test task");
+
+            var expectedTask = new Task("", new List<string>(){ }, new List<string>() { }, "This is a test task");
+            AssertEquivalence(expectedTask, task);
+        }
+
         [Test]
         public void Create_Priority_Body_Project_Context()
         {
@@ -74,6 +85,25 @@ namespace ToDoTests
             var task = new Task("X @work +test This is a test task");
 
             var expectedTask = new Task("", _projects, _contexts, "This is a test task", "", true);
+            AssertEquivalence(expectedTask, task);
+        }
+
+        [Test]
+        public void Create_People()
+        {
+            var task = new Task("@work +test This is a test task people:me");
+
+            var expectedTask = new Task("", _projects, _contexts, "This is a test task", "", false, "", _people);
+            AssertEquivalence(expectedTask, task);
+        }
+
+
+        [Test]
+        public void Create_Multiple_People()
+        {
+            var task = new Task("@work +test This is a test task people:me people:you");
+
+            var expectedTask = new Task("", _projects, _contexts, "This is a test task", "", false, "", new List<string>() { "me", "you" });
             AssertEquivalence(expectedTask, task);
         }
 
@@ -275,7 +305,20 @@ namespace ToDoTests
             Assert.AreEqual("2011-05-07", task.CreationDate);
         }
 
-		[Test]
+        [Test]
+        public void Create_AllIn()
+        {
+            var task = new Task("(A) 2011-05-07 t:2011-05-07 due:2011-05-08 people:me @work @home +test This is a test task people:you");
+
+            var expectedTask = new Task("(A)", _projects, new List<string>() { "@work", "@home" }, "This is a test task", 
+                "2011-05-08", thresholdDate: "2011-05-07", people: new List<string>() { "me", "you" });
+            
+            Assert.AreEqual("2011-05-07", task.CreationDate);
+            AssertEquivalence(expectedTask, task);
+        }
+
+
+        [Test]
 		public void Create_Project_with_non_alpha()
 		{
 			var task = new Task("This is a test task +work&home");
@@ -314,6 +357,7 @@ namespace ToDoTests
             Assert.AreEqual(t1.Priority, t2.Priority);
             CollectionAssert.AreEquivalent(t1.Projects, t2.Projects);
             CollectionAssert.AreEquivalent(t1.Contexts, t2.Contexts);
+            CollectionAssert.AreEquivalent(t1.People, t2.People);
             Assert.AreEqual(t1.DueDate, t2.DueDate);
             Assert.AreEqual(t1.Completed, t2.Completed);
             Assert.AreEqual(t1.Body, t2.Body);
